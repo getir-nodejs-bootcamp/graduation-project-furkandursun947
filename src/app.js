@@ -7,6 +7,7 @@ const validate = require("./middlewares/validate");
 const ErrorHandler = require("./middlewares/error.handler");
 const RecordsPayload = require("./validations/Records.validations")
 const responseModel = require("./models/response.model");
+const morgan = require("morgan");
 
 // ! since this project has only one endpoint, I will not split the code such as creatating routes, controller or service folders.
 
@@ -25,8 +26,9 @@ app.use(cors({
     origin: "*"
 }))
 
-
-
+// ? We can create a file and write our logs to the file. But I will keep it simple and log them in console.
+// ? Optionally for another logging package, winston can be used.  
+app.use(morgan("combined"));
 
 /*
 * This function filters the records data
@@ -50,6 +52,7 @@ const pipeline = (endDate, startDate, minCount, maxCount) => {
 
 
 /*
+* @desc: Get data that is filtered by req.body
 * @route: '/records', POST Method
 * @validate: middleware for checking the request's body
 * In this endpoint;
