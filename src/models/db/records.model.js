@@ -1,6 +1,6 @@
 const Mongoose = require("mongoose");
 
-
+// A schema of Records
 const RecordsSchema = new Mongoose.Schema(
     {
         key: String,

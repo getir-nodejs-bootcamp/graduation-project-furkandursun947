@@ -8,21 +8,36 @@ const ErrorHandler = require("./middlewares/error.handler");
 const RecordsPayload = require("./validations/Records.validations")
 const responseModel = require("./models/response.model");
 
+// ! since this project has only one endpoint, I will not split the code such as creatating routes, controller or service folders.
 
-config();
-loaders();
+
+config();       // setting our environment properties
+loaders();      // database load
 
 
 const app = express();
 
 app.use(express.json()); // ? optionally: body-parser can be used, this middleware is required for reading data from response   
+
+// cross-origin policy, allow any request 
 app.use(cors({
     methods: "*",
     origin: "*"
 }))
-// ! since this project has only one endpoint, I will not split the code such as creatating routes, controller or service folders.
 
 
+
+
+/*
+* This function filters the records data
+* @param1: endDate => endDate from request.body
+* @param2: startDate => startDate from request.body
+* // ! createdAt field in our records must be between these two dates.
+* @param3: minCount => minCount from request.body
+* @param4: maxCount => maxCount from request.body
+* // ! sum of counts field in our records must be between these two numbers.
+* @return: a pipeline that will be used in aggregate
+*/
 const pipeline = (endDate, startDate, minCount, maxCount) => {
     return [
         { $match: { createdAt: {$lt: endDate}, createdAt: {$gt: startDate}}},
@@ -34,7 +49,16 @@ const pipeline = (endDate, startDate, minCount, maxCount) => {
 }
 
 
-
+/*
+* @route: '/records', POST Method
+* @validate: middleware for checking the request's body
+* In this endpoint;
+*   - We get the request body from user
+*   - We convert string dates to Date object to compare with our createdAt field.
+*   - Then we use a pipeline to filter the data
+*   - @return If no record is found, set code of response to "1". If at least on record is found, then send a response with code "0".
+*   // ! NOTE: Response codes => "0" = Success, "1" = No record is found. 
+*/
 app.post('/records', validate(RecordsPayload),  async (req, res) => {
     var startDate = new Date(req.body.startDate);
     var endDate = new Date(req.body.endDate);
@@ -58,12 +82,13 @@ app.post('/records', validate(RecordsPayload),  async (req, res) => {
 
 app.listen(process.env.SERVER_PORT, () => {
     console.log(`Application is running on ${process.env.SERVER_PORT}`);
+
+    
+    // ! If user tries to request to an endpoint that is not valid, we catch the error in here.
     app.use((req, res, next) => {
         const error = new Error("Bad Request, no endpoint found in controller.");
         error.status = 404;
         next(error);
     })
-    
-
     app.use(ErrorHandler);
 });
