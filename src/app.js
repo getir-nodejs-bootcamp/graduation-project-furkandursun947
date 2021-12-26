@@ -4,9 +4,11 @@ const cors = require("cors");
 const loaders = require("./loaders");
 const Records = require("./models/db/records.model");
 const validate = require("./middlewares/validate");
-const ErrorHandler = require("./errors/error.handler");
+const ErrorHandler = require("./middlewares/error.handler");
 const RecordsPayload = require("./validations/Records.validations")
 const responseModel = require("./models/response.model");
+
+
 config();
 loaders();
 
@@ -57,10 +59,11 @@ app.post('/records', validate(RecordsPayload),  async (req, res) => {
 app.listen(process.env.SERVER_PORT, () => {
     console.log(`Application is running on ${process.env.SERVER_PORT}`);
     app.use((req, res, next) => {
-        const error = new Error("Hata");
-        console.log("geldi2");
-        // TODO error handling
-        res.status(404).send();
+        const error = new Error("Bad Request, no endpoint found in controller.");
+        error.status = 404;
+        next(error);
     })
+    
 
+    app.use(ErrorHandler);
 });
