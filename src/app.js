@@ -82,8 +82,8 @@ app.post('/records', validate(RecordsPayload),  async (req, res) => {
 });
 
 
-app.listen(process.env.SERVER_PORT, () => {
-    console.log(`Application is running on ${process.env.SERVER_PORT}`);
+app.listen(process.env.PORT, () => {
+    console.log(`Application is running on ${process.env.PORT}`);
 
     
     // ! If user tries to request to an endpoint that is not valid, we catch the error in here.
