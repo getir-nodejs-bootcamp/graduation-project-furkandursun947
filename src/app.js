@@ -50,7 +50,6 @@ const pipeline = (endDate, startDate, minCount, maxCount) => {
     ]
 }
 
-
 /*
 * @desc: Get data that is filtered by req.body
 * @route: '/records', POST Method
@@ -95,3 +94,6 @@ app.listen(process.env.SERVER_PORT, () => {
     })
     app.use(ErrorHandler);
 });
+
+
+module.exports = app
