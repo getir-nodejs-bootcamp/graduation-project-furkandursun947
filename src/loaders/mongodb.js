@@ -9,7 +9,8 @@ db.once("open", () => {
 
 // ! We want our project to wait database connection so it is more proper to use async.   
 const connectionDB = async () => {
-    const CONNECT_URL = process.env.DB_CONNECT_URL;
+    const {DB_CONNECT_URL} = process.env;
+    let CONNECT_URL = DB_CONNECT_URL;
     await Mongoose.connect(CONNECT_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
